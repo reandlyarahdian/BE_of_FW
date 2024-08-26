@@ -69,7 +69,13 @@ namespace Watermelon
             database.Initialise();
             dock.Initialise(this);
 
-            levelSave = SaveController.GetSaveObject<LevelSave>("level");
+            //levelSave = SaveController.GetSaveObject<LevelSave>("level");
+
+            levelSave = new LevelSave();
+            levelSave.MaxReachedLevelIndex = SaveController.GetSaveObject<LevelSave>("level").MaxReachedLevelIndex;
+            levelSave.RealLevelIndex = (int)ClientGameManager.Instance.roomState.currentLevel;
+            levelSave.DisplayLevelIndex = (int)ClientGameManager.Instance.roomState.currentLevel;
+            levelSave.LastPlayerLevelIndex = (int)ClientGameManager.Instance.roomState.currentLevel - 1;
 
             RaycastController raycastController = gameObject.AddComponent<RaycastController>();
             raycastController.Initialise();

@@ -104,15 +104,15 @@ namespace Watermelon
 
             if (LivesManager.Lives > 0)
             {
-                LivesManager.RemoveLife();
+                //LivesManager.RemoveLife();
 
                 UIController.HidePage<UIGameOver>();
                 GameController.ReplayLevel();
             }
-            else
-            {
-                addLivesPanel.Show();
-            }
+            //else
+            //{
+            //    addLivesPanel.Show();
+            //}
         }
 
         private void MenuButton()

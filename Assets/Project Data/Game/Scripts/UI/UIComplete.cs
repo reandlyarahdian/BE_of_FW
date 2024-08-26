@@ -38,6 +38,8 @@ namespace Watermelon
         private int coinsHash = FloatingCloud.StringToHash("Coins");
         private int currentReward;
 
+        private bool isClicked;
+
         public override void Initialise()
         {
             multiplyRewardButton.onClick.AddListener(MultiplyRewardButton);
@@ -46,6 +48,8 @@ namespace Watermelon
             wheelRewardButton.onClick.AddListener(WheelButton);
 
             coinsPanelUI.Initialise();
+            
+            isClicked = false;
 
             NotchSaveArea.RegisterRectTransform(safeAreaTransform);
         }
@@ -68,7 +72,6 @@ namespace Watermelon
             homeButtonScaleAnimation.Hide(immediately: true);
             homeButton.interactable = false;
             coinsPanelScalable.Hide(immediately: true);
-
 
             backgroundFade.Show(duration: 0.3f);
             levelCompleteLabel.Show();
@@ -168,8 +171,6 @@ namespace Watermelon
             {
                 if (success)
                 {
-                    ClientGameManager.Instance.MultiplierWatchAdsFinished();
-
                     int rewardMult = 3;
 
                     multiplyRewardButtonFade.Hide(immediately: true);
@@ -181,7 +182,9 @@ namespace Watermelon
                         {
                             CurrenciesController.Add(CurrencyType.Coins, currentReward * rewardMult);
 
-                            ClientGameManager.Instance.MultiplyPoints(rewardMult);
+                            ClientGameManager.Instance.WheelsPoints(rewardMult);
+
+                            ClientGameManager.Instance.EnergyWatchAdsFinished();
 
                             homeButton.interactable = true;
                             nextLevelButton.interactable = true;
@@ -190,9 +193,9 @@ namespace Watermelon
                 }
                 else
                 {
-                    ClientGameManager.Instance.SetScore(currentReward);
                     NextLevelButton();
                 }
+
             });
         }
 
@@ -215,17 +218,32 @@ namespace Watermelon
                 GameController.ReturnToMenu();
             });
 
-            LivesManager.AddLife();
+            //LivesManager.AddLife();
         }
 
         public void WheelButton()
         {
             AudioController.PlaySound(AudioController.Sounds.buttonSound);
 
-            UIController.HidePage<UIComplete>(() =>
+            if (noThanksAppearTween != null && noThanksAppearTween.IsActive)
             {
-                UIController.ShowPage<UIWheel>();
-            });
+                noThanksAppearTween.Kill();
+            }
+
+            if (!isClicked)
+            {
+                UIController.HidePage<UIComplete>(() =>
+                {
+                    UIController.ShowPage<UIWheel>();
+                });
+
+                isClicked = true;
+            }
+            else
+            {
+                NextLevelButton();
+            }
+            
         }
 
         #endregion

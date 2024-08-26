@@ -36,15 +36,18 @@ namespace Watermelon
             save = SaveController.GetSaveObject<LivesSave>("Lives");
             save.Init(data);
 
+            ClientGameManager.Instance.GetCurrentEnergy();
+
             // For init purposses
             SetLifes(Lives);
 
             if (save.infiniteLives)
             {
                 Tween.InvokeCoroutine(InfiniteLivesCoroutine());
-            } else if (Lives < data.maxLivesCount)
+            } else if (save.livesCount > 0 /*Lives < data.maxLivesCount*/)
             {
-                livesCoroutine = Tween.InvokeCoroutine(LivesCoroutine());
+                RemoveLife();
+                //livesCoroutine = Tween.InvokeCoroutine(LivesCoroutine());
             }
         }
 
@@ -115,7 +118,7 @@ namespace Watermelon
         {
             if (save.infiniteLives || !DoNotSpendLivesMenu.CanLivesBeSpent()) return;
 
-            Lives--;
+            Lives-=8;
 
             if (Lives < 0)
                 Lives = 0;
@@ -229,7 +232,7 @@ namespace Watermelon
 
         private class LivesSave : ISaveObject
         {
-            public int livesCount;
+            public int livesCount = Mathf.CeilToInt(ClientGameManager.Instance.roomState.energy);
             public bool infiniteLives;
 
             public long dateBinary;
@@ -243,7 +246,7 @@ namespace Watermelon
                 {
                     firstTime = false;
 
-                    livesCount = data.maxLivesCount;
+                    livesCount = Mathf.CeilToInt(ClientGameManager.Instance.roomState.energy);
                     date = DateTime.Now;
                 }
                 else

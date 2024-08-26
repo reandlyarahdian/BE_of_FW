@@ -33,6 +33,7 @@ public class WheelButtonPresenter : MonoBehaviour
         button.interactable = false;
         
         wheelManager.CollectReward();
+        wheel.isActiveated = true;
         button.onClick.AddListener(ClaimEndedHandler);
     }
 
@@ -57,7 +58,6 @@ public class WheelButtonPresenter : MonoBehaviour
         button.interactable = false;
 
         wheelManager.NextStart();
-        wheel.WheelButton();
     }
 
     private void UpdateButton()

@@ -19,4 +19,5 @@ interface UserLevel {
     requiredExp: number
     currentExp: number
     expToNextLevel: number
+    maxLevel: number
 }

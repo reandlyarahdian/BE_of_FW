@@ -65,6 +65,7 @@ export class MatchTile extends Room<MatchTileState> {
     this.state.energy = 8;
     this.maxClients = 1;
     this.state.currentLevel = 1;
+    this.state.score = 0;
 
     this.onMessage("start_playsession", (client, message) => {
       this.sessionLog.showLog("start!");
@@ -76,19 +77,17 @@ export class MatchTile extends Room<MatchTileState> {
 
         this.state.playSession.playSessionId = crypto.randomUUID();
         this.state.playSession.playSessionStartTS = Date.now();
-        this.state.playSession.playSessionActionCount = 0;
-
-        this.state.score = 0; //
+        this.state.playSession.playSessionActionCount = 0; //
 
         // store to db
         this.energy.decrement(this.energy_required);
       }
     });
 
-    this.onMessage("set_score", (client, message) => {
+    this.onMessage("set_score", (client, message : number) => {
       this.sessionLog.showLog("score!");
-      if (parseInt(message) < 100000) {
-        this.state.score = parseInt(message);
+      if (message < 100000) {
+        this.state.score = message;
       }
 
       if (isNaN(message) || message < 0) {
@@ -97,36 +96,36 @@ export class MatchTile extends Room<MatchTileState> {
       }
 
       if (
-        !scorePerActionAvgCheck(
+        scorePerActionAvgCheck(
           this.state.score,
           this.state.playSession.playSessionActionCount,
-          10000
+          1000
         )
       ) {
         this.sessionLog.addHistory("cheating alert!");
         this.disconnect();
       }
-      const score = parseInt(message);
+      const score = message;
         client.send("score", score);
 
         this.sessionLog.addHistory(`${score}`);
 
-        this.state.score += score;
+        this.state.score = score;
 
         this.sessionLog.addHistory(`score: ${this.state.score}`);
     });
 
-    this.onMessage("set_lvl", (client, message) => {
+    this.onMessage("set_lvl", (client, message : number) => {
       this.sessionLog.showLog("level!");
-      if (parseInt(message) < 100000) {
-        this.state.currentLevel = parseInt(message);
+      if (message < 100000) {
+        this.state.currentLevel = message;
       }
       if (isNaN(message) || message < 0) {
         this.sessionLog.addHistory("Invalid level received: " + message);
         return;
       }
       if (
-        !scorePerActionAvgCheck(
+        scorePerActionAvgCheck(
           this.state.currentLevel,
           this.state.playSession.playSessionActionCount,
           201
@@ -135,7 +134,7 @@ export class MatchTile extends Room<MatchTileState> {
         this.sessionLog.addHistory("cheating alert!");
         this.disconnect();
       }
-      const level = parseInt(message);
+      const level = message;
       client.send("level", level);
 
       this.sessionLog.addHistory(`${level}`);
@@ -164,11 +163,11 @@ export class MatchTile extends Room<MatchTileState> {
       this.energy.increment(this.energy_required)
     })
 
-    this.onMessage("wheels_points", (client, message) => {
+    this.onMessage("wheels_points", (client, message : number) => {
       this.sessionLog.addHistory("clicked! add point");
       this.sessionLog.showLog("wheels!");
 
-      const wheels = parseInt(message);
+      const wheels = message;
         client.send("wheels", wheels);
 
         this.sessionLog.addHistory(`${wheels}`);
@@ -178,13 +177,13 @@ export class MatchTile extends Room<MatchTileState> {
         this.sessionLog.addHistory(`score: ${this.state.score}`);
     });
 
-    this.onMessage("multiply_points", (client, message) => {
+    this.onMessage("multiply_points", (client, message : number) => {
       this.sessionLog.addHistory("clicked! multiply point");
       this.sessionLog.showLog("multiply!");
       if (this.state.playSession.isEligibleForMultiplier) {
         this.state.playSession.isEligibleForMultiplier = false;
 
-        const multiplier = parseInt(message);
+        const multiplier = message;
         client.send("multiplier", multiplier);
 
         this.sessionLog.addHistory(`${multiplier}x`);

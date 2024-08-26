@@ -8,7 +8,7 @@ namespace Watermelon
     [CreateAssetMenu(fileName = "Lives Data", menuName = "Content/Data/Lives")]
     public class LivesData : ScriptableObject
     {
-        public int maxLivesCount = 5;
+        public int maxLivesCount = 10000;
         [Tooltip("In seconds")]public int oneLifeRestorationDuration = 1200;
 
         [Space]

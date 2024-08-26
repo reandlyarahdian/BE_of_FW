@@ -83,7 +83,7 @@ namespace Watermelon
             {
                 if (success)
                 {
-                    LivesManager.AddLife();
+                    //LivesManager.AddLife();
 
                     if (lifeRecievedAudio != null)
                         AudioController.PlaySound(lifeRecievedAudio);

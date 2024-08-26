@@ -113,6 +113,11 @@ public class ClientManager : MonoBehaviour
         }
     }
 
+    public ColyseusClient Client()
+    {
+        return _client;
+    }
+
     public ColyseusRoom<MatchTileState> GameRoom()
     {
         return _room;

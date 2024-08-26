@@ -5,6 +5,8 @@ public class WheelButton : MonoBehaviour
 {
     public event Action ButtonNameChanged;
 
+    public WheelManager wheelManager;
+
     private string _buttonText = "Spin";
     public string btnText{ get => _buttonText; set => _buttonText.ToString(); }
 
@@ -17,14 +19,14 @@ public class WheelButton : MonoBehaviour
 
     public void ClaimAvailable()
     {
-        _buttonText = "Claim";
+        _buttonText = "Claim " + wheelManager.CollectableRewordEx();
 
         ButtonNameHandler();
     }
 
     public void NextAvailable()
     {
-        _buttonText = "Next";
+        _buttonText = "Back";
 
         ButtonNameHandler();
     }

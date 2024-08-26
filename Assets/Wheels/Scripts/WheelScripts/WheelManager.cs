@@ -7,6 +7,11 @@ using UnityEngine.UI;
 
 public class WheelManager : MonoBehaviour
 {
+
+    [Header("Coins Label")]
+    [SerializeField] UIScaleAnimation coinsPanelScalable;
+    [SerializeField] CurrencyUIPanelSimple coinsPanelUI;
+    [Space]
     [SerializeField] private RewardFactory rewardFactory;
     [SerializeField] private SpinBehaviour spinBehaviour;
     [SerializeField] private Transform collectDestination;
@@ -42,6 +47,8 @@ public class WheelManager : MonoBehaviour
     private float halfPieceAngleWithPaddings;
 
     private int currentReward;
+
+    private int coinsHash = FloatingCloud.StringToHash("Coins");
 
     private void Start()
     {
@@ -99,22 +106,30 @@ public class WheelManager : MonoBehaviour
 
         spinBehaviour.StartSpin(collectableReward.id, rewardList.Count);
     }
+
     public void CollectReward()
     {
         Image rewardImage = GetRewardBehaviour().iconRenderer;
         Vector2 maxScale = new Vector2(2.5f, 2.5f);
+        
+        FloatingCloud.SpawnCurrency(coinsHash, rewardImage.rectTransform, coinsPanelScalable.RectTransform, 10, "");
+
         rewardImage.transform.DOScale(maxScale, collectDuration / 2);
         rewardImage.transform.DOMove(collectDestination.position, collectDuration, delay, unscaledTime, UpdateMethod.LateUpdate).OnComplete(CollecEndHandler);
     }
 
+    public int CollectableRewordEx()
+    {
+        return collectableReward.value;
+    }
+
+    public CurrencyType CollectableTypeEx()
+    {
+        return collectableReward.currencyType;
+    }
+
     public void CollecEndHandler()
     {
-        currentReward = LevelController.CurrentReward;
-
-        CurrenciesController.Add(collectableReward.currencyType, currentReward + collectableReward.value);
-
-        ClientGameManager.Instance.WheelsPoints(collectableReward.value);
-
         GetRewardBehaviour().ResetTransform();
 
         CollectEnded?.Invoke();
@@ -122,7 +137,6 @@ public class WheelManager : MonoBehaviour
 
     public void NextStart()
     {
-
         Debug.Log("Reward is " + collectableReward.name +
                     " | Value: " + collectableReward.value +
                         " | ID: " + collectableReward.id +

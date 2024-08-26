@@ -219,24 +219,22 @@ namespace Watermelon
                 // start level
                 GameController.LoadLevel(levelId);
 
-                ClientGameManager.Instance.SetLevel(levelId);
-
-                Tween.DelayedCall(2f, LivesManager.RemoveLife);
+                //Tween.DelayedCall(2f, LivesManager.RemoveLife);
             }
             else
             {
-                addLivesPanel.Show((bool resultSuccessfull) =>
-                {
-                    if (resultSuccessfull)
-                    {
-                        // start level
-                        GameController.LoadLevel(levelId);
+                //addLivesPanel.Show((bool resultSuccessfull) =>
+                //{
+                //    if (resultSuccessfull)
+                //    {
+                //        // start level
+                //        GameController.LoadLevel(levelId);
 
-                        ClientGameManager.Instance.SetLevel(levelId);
+                //        ClientGameManager.Instance.SetLevel(levelId);
 
-                        Tween.DelayedCall(2f, LivesManager.RemoveLife);
-                    }
-                });
+                //        Tween.DelayedCall(2f, LivesManager.RemoveLife);
+                //    }
+                //});
             }
         }
 
