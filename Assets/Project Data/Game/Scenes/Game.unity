@@ -708,7 +708,6 @@ GameObject:
   - component: {fileID: 1060784209}
   - component: {fileID: 1060784213}
   - component: {fileID: 1060784212}
-  - component: {fileID: 1060784214}
   m_Layer: 0
   m_Name: ScriptHolder
   m_TagString: Untagged
@@ -1091,18 +1090,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6ae445f89db1e9e40847feb751121f05, type: 2}
   dummyScriptableRewardObject: {fileID: 11400000, guid: 0aa72fc9e99427644a8bfd0891f700bc,
     type: 2}
---- !u!114 &1060784214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1060784196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: faa031f6c22ff9a4db6214ecfc9b2b08, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1676080248
 GameObject:
   m_ObjectHideFlags: 0

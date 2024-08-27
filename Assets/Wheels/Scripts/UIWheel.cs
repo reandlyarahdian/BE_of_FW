@@ -122,11 +122,9 @@ namespace Watermelon
         {
             AudioController.PlaySound(AudioController.Sounds.buttonSound);
 
-            currentReward = LevelController.CurrentReward;
+            CurrenciesController.Add(wheelManager.CollectableTypeEx(), wheelManager.CollectableRewordEx());
 
-            CurrenciesController.Add(wheelManager.CollectableTypeEx(), currentReward + wheelManager.CollectableRewordEx());
-
-            ClientGameManager.Instance.WheelsPoints(wheelManager.CollectableRewordEx());
+            ClientManager.Instance.WheelsPoints(wheelManager.CollectableRewordEx());
 
             UIController.HidePage<UIWheel>(() =>
             {
@@ -138,8 +136,6 @@ namespace Watermelon
         public void ExtraButton()
         {
             AudioController.PlaySound(AudioController.Sounds.buttonSound);
-
-            currentReward = LevelController.CurrentReward;
 
             AdsManager.ShowRewardBasedVideo((bool success) =>
             {
@@ -153,7 +149,7 @@ namespace Watermelon
                         {
                             CurrenciesController.Add(CurrencyType.Coins, wheelManager.CollectableRewordEx() * rewrdMulti);
 
-                            ClientGameManager.Instance.WheelsPoints(wheelManager.CollectableRewordEx() * rewrdMulti);
+                            ClientManager.Instance.WheelsPoints(wheelManager.CollectableRewordEx() * rewrdMulti);
                         });
                     });
 

@@ -7,7 +7,7 @@ namespace Watermelon
 {
     public class LevelController : MonoBehaviour
     {
-        private static LevelController instance;
+        public static LevelController instance;
 
         [SerializeField] LevelDatabase database;
         [SerializeField] LevelSpawnAnimation levelSpawnAnimation;
@@ -30,6 +30,8 @@ namespace Watermelon
 
         public static int MaxReachedLevelIndex => levelSave.MaxReachedLevelIndex;
         public static int DisplayedLevelIndex => levelSave.DisplayLevelIndex;
+        public static int RealLevelIndex => levelSave.RealLevelIndex;
+        public static int LastPlayerLevelIndex => levelSave.LastPlayerLevelIndex;
 
         private static int loadedLevelIndex;
 
@@ -69,13 +71,7 @@ namespace Watermelon
             database.Initialise();
             dock.Initialise(this);
 
-            //levelSave = SaveController.GetSaveObject<LevelSave>("level");
-
-            levelSave = new LevelSave();
-            levelSave.MaxReachedLevelIndex = SaveController.GetSaveObject<LevelSave>("level").MaxReachedLevelIndex;
-            levelSave.RealLevelIndex = (int)ClientGameManager.Instance.roomState.currentLevel;
-            levelSave.DisplayLevelIndex = (int)ClientGameManager.Instance.roomState.currentLevel;
-            levelSave.LastPlayerLevelIndex = (int)ClientGameManager.Instance.roomState.currentLevel - 1;
+            levelSave = SaveController.GetSaveObject<LevelSave>("level");
 
             RaycastController raycastController = gameObject.AddComponent<RaycastController>();
             raycastController.Initialise();
@@ -96,6 +92,16 @@ namespace Watermelon
             }
 
             LoadBackground();
+        }
+
+        public void InitLevelServer(int value)
+        {
+            dock.DisposeQuickly();
+            dock.Initialise(this);
+
+            levelSave.Init(value);
+
+            Debug.Log("A " + levelSave.RealLevelIndex + " B " + levelSave.DisplayLevelIndex + " C " + levelSave.LastPlayerLevelIndex);
         }
 
         public void LoadCustomLevel(LevelData levelData, PreloadedLevelData preloadedLevelData, BackgroundData backgroundData, bool animateDock, SimpleCallback onLevelLoaded = null)

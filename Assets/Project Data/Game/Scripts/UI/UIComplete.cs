@@ -66,6 +66,7 @@ namespace Watermelon
             rewardLabel.Hide(immediately: true);
             multiplyRewardButtonFade.Hide(immediately: true);
             wheelRewardButtonFade.Hide(immediately: true);
+            wheelRewardButton.interactable = false;
             multiplyRewardButton.interactable = false;
             nextLevelButtonScaleAnimation.Hide(immediately: true);
             nextLevelButton.interactable = false;
@@ -78,7 +79,16 @@ namespace Watermelon
 
             coinsPanelScalable.Show();
 
-            currentReward = LevelController.CurrentReward;
+            if (!isClicked)
+            {
+                currentReward = LevelController.CurrentReward;
+                ClientManager.Instance.SetScore(ClientManager.Instance.roomState.score + currentReward);
+            }
+            else
+            {
+                currentReward = (int)ClientManager.Instance.roomState.score;
+                ClientManager.Instance.SetScore(currentReward);
+            }
 
             ShowRewardLabel(currentReward, false, 0.3f, delegate
             {
@@ -86,7 +96,12 @@ namespace Watermelon
                 {
                     FloatingCloud.SpawnCurrency(coinsHash, rewardLabel.RectTransform, coinsPanelScalable.RectTransform, 10, "", () =>
                     {
-                        CurrenciesController.Add(CurrencyType.Coins, currentReward);
+                        
+
+                        if (!isClicked)
+                        {
+                            CurrenciesController.Add(CurrencyType.Coins, currentReward);
+                        }
 
                         multiplyRewardButtonFade.Show();
                         multiplyRewardButton.interactable = true;
@@ -173,6 +188,8 @@ namespace Watermelon
                 {
                     int rewardMult = 3;
 
+                    ClientManager.Instance.MultiplierWatchAdsFinished();
+
                     multiplyRewardButtonFade.Hide(immediately: true);
                     multiplyRewardButton.interactable = false;
 
@@ -182,9 +199,7 @@ namespace Watermelon
                         {
                             CurrenciesController.Add(CurrencyType.Coins, currentReward * rewardMult);
 
-                            ClientGameManager.Instance.WheelsPoints(rewardMult);
-
-                            ClientGameManager.Instance.EnergyWatchAdsFinished();
+                            ClientManager.Instance.MultiplyPoints(rewardMult);
 
                             homeButton.interactable = true;
                             nextLevelButton.interactable = true;
@@ -217,7 +232,6 @@ namespace Watermelon
             {
                 GameController.ReturnToMenu();
             });
-
             //LivesManager.AddLife();
         }
 
@@ -241,7 +255,8 @@ namespace Watermelon
             }
             else
             {
-                NextLevelButton();
+                wheelRewardButtonFade.Hide(immediately: true);
+                wheelRewardButton.interactable = false;
             }
             
         }

@@ -9,7 +9,7 @@ namespace Watermelon
 {
     public class LivesManager : MonoBehaviour
     {
-        private static LivesManager instance;
+        public static LivesManager instance;
 
         [SerializeField] LivesData data;
 
@@ -36,7 +36,7 @@ namespace Watermelon
             save = SaveController.GetSaveObject<LivesSave>("Lives");
             save.Init(data);
 
-            ClientGameManager.Instance.GetCurrentEnergy();
+            ClientManager.Instance.GetCurrentEnergy();
 
             // For init purposses
             SetLifes(Lives);
@@ -44,11 +44,17 @@ namespace Watermelon
             if (save.infiniteLives)
             {
                 Tween.InvokeCoroutine(InfiniteLivesCoroutine());
-            } else if (save.livesCount > 0 /*Lives < data.maxLivesCount*/)
-            {
-                RemoveLife();
-                //livesCoroutine = Tween.InvokeCoroutine(LivesCoroutine());
             }
+            else if (save.livesCount > 0 && Lives < data.maxLivesCount)
+            {
+                //RemoveLife();
+                livesCoroutine = Tween.InvokeCoroutine(LivesCoroutine());
+            }
+        }
+
+        public void InitLivesServer(int value)
+        {
+            save.livesCount = value;
         }
 
         public static void AddPanel(AddLivesPanel panel)
@@ -232,7 +238,7 @@ namespace Watermelon
 
         private class LivesSave : ISaveObject
         {
-            public int livesCount = Mathf.CeilToInt(ClientGameManager.Instance.roomState.energy);
+            public int livesCount = Mathf.CeilToInt(ClientManager.Instance.roomState.energy);
             public bool infiniteLives;
 
             public long dateBinary;
@@ -246,7 +252,7 @@ namespace Watermelon
                 {
                     firstTime = false;
 
-                    livesCount = Mathf.CeilToInt(ClientGameManager.Instance.roomState.energy);
+                    livesCount = Mathf.CeilToInt(ClientManager.Instance.roomState.energy);
                     date = DateTime.Now;
                 }
                 else
@@ -255,24 +261,18 @@ namespace Watermelon
 
                     if (infiniteLives)
                     {
-                        livesCount = data.maxLivesCount;
+                        livesCount = Mathf.CeilToInt(ClientManager.Instance.roomState.energy);
 
                         if (DateTime.Now >= date) infiniteLives = false;
                     }
 
-                    if (livesCount < data.maxLivesCount)
+                    if (livesCount < Mathf.CeilToInt(ClientManager.Instance.roomState.energy))
                     {
+                        livesCount = Mathf.CeilToInt(ClientManager.Instance.roomState.energy);
+
                         var timeDif = DateTime.Now - date;
 
                         var oneLifeSpan = TimeSpan.FromSeconds(data.oneLifeRestorationDuration);
-
-                        while (timeDif >= oneLifeSpan && livesCount < data.maxLivesCount)
-                        {
-                            timeDif -= oneLifeSpan;
-                            date += oneLifeSpan;
-
-                            livesCount++;
-                        }
                     }
                 }
             }

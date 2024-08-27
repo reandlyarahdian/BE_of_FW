@@ -44,11 +44,13 @@ namespace Watermelon
                     Debug.LogError(string.Format("[Currency Syste]: Currency with type {0} added to database twice!", currencies[i].CurrencyType));
                 }
 
-                Currency.Save save = SaveController.GetSaveObject<Currency.Save>("currency" + ":" + (int)currencies[i].CurrencyType);
-                if(save.Amount == -1)
-                    save.Amount = currencies[i].DefaultAmount;
+                currencies[0].Amount = (int)ClientManager.Instance.roomState.score;
 
-                currencies[i].SetSave(save);
+                //Currency.Save save = SaveController.GetSaveObject<Currency.Save>("currency" + ":" + (int)currencies[i].CurrencyType);
+                //if(save.Amount == -1)
+                //    save.Amount = currencies[i].DefaultAmount;
+
+                //currencies[i].SetSave(save);
             }
 
             isInitialised = true;

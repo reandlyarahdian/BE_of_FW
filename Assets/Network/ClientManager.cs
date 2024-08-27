@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Colyseus;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Watermelon;
 
 [DefaultExecutionOrder(-999)]
 public class ClientManager : MonoBehaviour
@@ -15,9 +17,11 @@ public class ClientManager : MonoBehaviour
     private string appKey = "app-key";
     private CustomAuth _customAuth;
 
-    private static ClientManager _instance;
-
     public UserDetail CurrentUserDetail { get; private set; }
+
+    public MatchTileState roomState = new MatchTileState();
+
+    private static ClientManager _instance;
 
     public static ClientManager Instance
     {
@@ -47,9 +51,11 @@ public class ClientManager : MonoBehaviour
 
         await FetchUserDetails();
 
-        bool isRoomCreated = await JoinOrCreateGame();
+        bool isRoomCreated = await CreateGame();
+
         if (isRoomCreated)
         {
+            await InitializeRoomAsync();
             Debug.Log(SceneManager.GetActiveScene().name);
         }
         else
@@ -65,6 +71,7 @@ public class ClientManager : MonoBehaviour
 
     private async Task FetchUserDetails()
     {
+
         CurrentUserDetail = await _customAuth.GetUserDetail();
         if (CurrentUserDetail != null)
         {
@@ -98,12 +105,13 @@ public class ClientManager : MonoBehaviour
         }
     }
 
-    private async Task<bool> JoinOrCreateGame()
+    private async Task<bool> CreateGame()
     {
         try
         {
-            _room = await _client.JoinOrCreate<MatchTileState>("match_tile");
+            _room = await _client.Create<MatchTileState>("match_tile");
             DontDestroyOnLoad(this.gameObject);
+
             return true;
         }
         catch (System.Exception ex)
@@ -122,4 +130,209 @@ public class ClientManager : MonoBehaviour
     {
         return _room;
     }
+
+
+    private async Task InitializeRoomAsync()
+    {
+        _room = GameRoom();
+
+        _client = Client();
+
+        if (_room == null)
+        {
+            Debug.LogError("Room not initialized yet. Waiting for room initialization...");
+            await WaitForRoomInitializationAsync();
+        }
+
+        if (_room != null)
+        {
+            InitializeClientData();
+            SetupEventHandlers();
+        }
+        else
+        {
+            Debug.LogError("Room initialization failed after waiting.");
+        }
+    }
+
+    private void InitializeClientData()
+    {
+        RequestData();
+        _room.OnMessage<MatchTileState>("initial_data", OnReceiveInitialData);
+    }
+
+    public void OnReceiveInitialData(object initialData)
+    {
+        var data = JsonUtility.ToJson(initialData);
+
+        Debug.Log(data);
+
+        InitialData initial = new InitialData();
+
+        JsonUtility.FromJsonOverwrite(data, initial);
+
+        roomState.score = initial.score;
+        roomState.currentLevel = initial.currentLevel;
+        roomState.energy = initial.energy;
+
+        CurrenciesController.Set(CurrencyType.Coins, (int)roomState.score);
+        LivesManager.instance.InitLivesServer((int)roomState.energy);
+        LevelController.instance.InitLevelServer((int)roomState.currentLevel);
+
+        Debug.Log($"Level: {initial.currentLevel}, Score: {initial.score}, Energy: {initial.energy}");
+    }
+
+    private async Task WaitForRoomInitializationAsync()
+    {
+        while (_room == null)
+        {
+            await Task.Delay(100);
+            _room = GameRoom();
+        }
+    }
+
+    private void SetupEventHandlers()
+    {
+        if (_room != null)
+        {
+            _room.OnStateChange += OnStateChange;
+            _room.OnLeave += OnLeaveRoom;
+        }
+    }
+
+    private void OnStateChange(MatchTileState state, bool isFirstState)
+    {
+        SetScore(roomState.score);
+        SetLevel(roomState.currentLevel);
+        CurrenciesController.Set(CurrencyType.Coins, (int)roomState.score);
+
+        Debug.Log("State Updated: Level: " + state.currentLevel + ", Score: " + state.score + ", Energy: " + state.energy);
+    }
+
+    public async Task StartPlaySessionAsync()
+    {
+        await _room.Send("start_playsession", null);
+    }
+
+    public async Task SetLevelAsync(float level)
+    {
+        await _room.Send("set_lvl", level);
+    }
+
+    public async Task SetScoreAsync(float score)
+    {
+        await _room.Send("set_score", score);
+    }
+
+    public async Task WheelsPointsAsync(float score)
+    {
+        await _room.Send("wheels_points", score);
+    }
+
+    public async Task MultiplyPointsAsync(float score)
+    {
+        await _room.Send("multiply_points", score);
+    }
+
+    public async Task EnergyAfterAdsAsync()
+    {
+        await _room.Send("energy_watch_ads_finished", null);
+    }
+
+    public async Task MultipierAdsFinished()
+    {
+        await _room.Send("multiplier_watch_ads_finished", null);
+    }
+
+    public async Task EnergyGet()
+    {
+        await _room.Send("get_current_energy", null);
+    }
+
+    public async Task EndPlaySessionAsync()
+    {
+        await _room.Send("end_playsession", null);
+    }
+
+    public async Task RequestDataAsync()
+    {
+        await _room.Send("request_initial_data");
+    }
+
+    private void OnLeaveRoom(int code)
+    {
+        Debug.Log("Left the room");
+    }
+
+    public void RequestData()
+    {
+        _ = RequestDataAsync();
+    }
+
+    public void StartPlaySession()
+    {
+        _ = StartPlaySessionAsync();
+    }
+
+    public void SetLevel(float level)
+    {
+        _ = SetLevelAsync(level);
+        roomState.currentLevel = level;
+    }
+
+    public void SetScore(float score)
+    {
+        _ = SetScoreAsync(score);
+        roomState.score = score;
+    }
+
+    public void GetCurrentEnergy()
+    {
+        _ = EnergyGet();
+    }
+
+    public void MultiplierWatchAdsFinished()
+    {
+        _ = MultipierAdsFinished();
+    }
+
+    public void EnergyWatchAdsFinished()
+    {
+        _ = EnergyAfterAdsAsync();
+    }
+
+    public void WheelsPoints(float point)
+    {
+        _ = WheelsPointsAsync(point);
+        roomState.score += point;
+    }
+
+    public void MultiplyPoints(float point)
+    {
+        _ = MultiplyPointsAsync(point);
+        roomState.score *= point;
+    }
+
+    public void EndPlaySession()
+    {
+        _ = EndPlaySessionAsync();
+    }
+
+    void OnApplicationQuit()
+    {
+        if (_room != null)
+        {
+            EndPlaySession();
+            _ = _room.Leave();
+        }
+    }
+}
+
+
+[Serializable]
+public class InitialData
+{
+    public float currentLevel;
+    public float score;
+    public float energy;
 }

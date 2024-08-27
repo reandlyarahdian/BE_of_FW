@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace Watermelon
 {
-    [DefaultExecutionOrder(-998)]
+    [DefaultExecutionOrder(-997)]
     [HelpURL("https://docs.google.com/document/d/1ORNWkFMZ5_Cc-BUgu9Ds1DjMjR4ozMCyr6p_GGdyCZk")]
     public class Initialiser : MonoBehaviour
     {
@@ -35,6 +35,8 @@ namespace Watermelon
                 InitSettings = initSettings;
                 SystemCanvas = systemCanvas;
                 InitialiserGameObject = gameObject;
+
+                ClientManager.Instance.StartPlaySession();
 
 #if MODULE_INPUT_SYSTEM
                 eventSystem.gameObject.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();

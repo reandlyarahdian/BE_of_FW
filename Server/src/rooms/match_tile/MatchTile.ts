@@ -62,10 +62,18 @@ export class MatchTile extends Room<MatchTileState> {
   onCreate(options: any) {
     this.setState(new MatchTileState());
     this.state.playSession = new PlaySession();
-    this.state.energy = 8;
+    this.state.energy = 16;
     this.maxClients = 1;
-    this.state.currentLevel = 1;
-    this.state.score = 0;
+    this.state.currentLevel = 3;
+    this.state.score = 30;
+
+    this.onMessage("request_initial_data", (client) => {
+      client.send("initial_data", {
+        currentLevel: this.state.currentLevel,
+        score: this.state.score,
+        energy: this.state.energy
+      });
+    });
 
     this.onMessage("start_playsession", (client, message) => {
       this.sessionLog.showLog("start!");
@@ -73,14 +81,14 @@ export class MatchTile extends Room<MatchTileState> {
       if (this.state.energy < this.energy_required) {
         this.sessionLog.addHistory("NEE: NotEnoughEnergy");
       } else {
-        this.state.energy -= this.energy_required;
+        //this.state.energy -= this.energy_required;
 
         this.state.playSession.playSessionId = crypto.randomUUID();
         this.state.playSession.playSessionStartTS = Date.now();
         this.state.playSession.playSessionActionCount = 0; //
-
+        this.sessionLog.showLog(this.state.playSession.playSessionActionCount.toString());
         // store to db
-        this.energy.decrement(this.energy_required);
+        this.energy.set(this.energy_required);        
       }
     });
 
@@ -96,7 +104,7 @@ export class MatchTile extends Room<MatchTileState> {
       }
 
       if (
-        scorePerActionAvgCheck(
+        !scorePerActionAvgCheck(
           this.state.score,
           this.state.playSession.playSessionActionCount,
           1000
@@ -125,7 +133,7 @@ export class MatchTile extends Room<MatchTileState> {
         return;
       }
       if (
-        scorePerActionAvgCheck(
+        !scorePerActionAvgCheck(
           this.state.currentLevel,
           this.state.playSession.playSessionActionCount,
           201
@@ -200,7 +208,7 @@ export class MatchTile extends Room<MatchTileState> {
       // store to db
       if (this.state.score) {
         this.previous_score = this.state.score;
-        this.melonPoints.increment(this.state.score);
+        this.melonPoints.decrement(this.state.score);
       }
 
       if (this.state.currentLevel) {
@@ -225,7 +233,7 @@ export class MatchTile extends Room<MatchTileState> {
     // store to db
     if (this.state.score && this.state.score !== this.previous_score) {
       this.previous_score = this.state.score;
-      this.melonPoints.increment(this.state.score);
+      this.melonPoints.decrement(this.state.score);
     }
     if (this.state.currentLevel 
       && this.state.currentLevel !== this.previous_lvl) {

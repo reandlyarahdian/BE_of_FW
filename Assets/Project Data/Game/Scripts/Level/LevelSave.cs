@@ -15,5 +15,14 @@
         {
 
         }
+
+        public void Init(int value)
+        {
+            MaxReachedLevelIndex = value;
+            RealLevelIndex = value;
+            DisplayLevelIndex = value;
+            IsPlayingRandomLevel = false;
+            LastPlayerLevelIndex = value - 1;
+        }
     }
 }
