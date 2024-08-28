@@ -114,6 +114,10 @@ public class WheelManager : MonoBehaviour
         
         FloatingCloud.SpawnCurrency(coinsHash, rewardImage.rectTransform, coinsPanelScalable.RectTransform, 10, "");
 
+        CurrenciesController.Add(CollectableTypeEx(), CollectableRewordEx());
+
+        ClientManager.Instance.WheelsPoints(CollectableRewordEx());
+
         rewardImage.transform.DOScale(maxScale, collectDuration / 2);
         rewardImage.transform.DOMove(collectDestination.position, collectDuration, delay, unscaledTime, UpdateMethod.LateUpdate).OnComplete(CollecEndHandler);
     }

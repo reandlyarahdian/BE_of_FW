@@ -38,7 +38,7 @@ namespace Watermelon
         private int coinsHash = FloatingCloud.StringToHash("Coins");
         private int currentReward;
 
-        private bool isClicked;
+        private bool isClicked = false;
 
         public override void Initialise()
         {
@@ -82,41 +82,49 @@ namespace Watermelon
             if (!isClicked)
             {
                 currentReward = LevelController.CurrentReward;
-                ClientManager.Instance.SetScore(ClientManager.Instance.roomState.score + currentReward);
+
+                ShowRewardLabel(currentReward, false, 0.3f, delegate
+                {
+                    rewardLabel.RectTransform.DOPushScale(Vector3.one * 1.1f, Vector3.one, 0.2f, 0.2f).OnComplete(delegate
+                    {
+                        FloatingCloud.SpawnCurrency(coinsHash, rewardLabel.RectTransform, coinsPanelScalable.RectTransform, 10, "", () =>
+                        {
+
+                            CurrenciesController.Add(CurrencyType.Coins, currentReward);
+                            ClientManager.Instance.SetScore(ClientManager.Instance.roomState.score + currentReward);
+
+                            multiplyRewardButtonFade.Show();
+                            multiplyRewardButton.interactable = true;
+
+                            wheelRewardButtonFade.Show();
+                            wheelRewardButton.interactable = true;
+
+                            homeButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
+                            nextLevelButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
+
+                            homeButton.interactable = true;
+                            nextLevelButton.interactable = true;
+                        });
+                    });
+                });
             }
             else
             {
                 currentReward = (int)ClientManager.Instance.roomState.score;
                 ClientManager.Instance.SetScore(currentReward);
+
+                multiplyRewardButtonFade.Hide(immediately: true);
+                multiplyRewardButton.interactable = false;
+
+                wheelRewardButtonFade.Hide(immediately: true);
+                wheelRewardButton.interactable = false;
+
+                homeButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
+                nextLevelButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
+
+                homeButton.interactable = true;
+                nextLevelButton.interactable = true;
             }
-
-            ShowRewardLabel(currentReward, false, 0.3f, delegate
-            {
-                rewardLabel.RectTransform.DOPushScale(Vector3.one * 1.1f, Vector3.one, 0.2f, 0.2f).OnComplete(delegate
-                {
-                    FloatingCloud.SpawnCurrency(coinsHash, rewardLabel.RectTransform, coinsPanelScalable.RectTransform, 10, "", () =>
-                    {
-                        
-
-                        if (!isClicked)
-                        {
-                            CurrenciesController.Add(CurrencyType.Coins, currentReward);
-                        }
-
-                        multiplyRewardButtonFade.Show();
-                        multiplyRewardButton.interactable = true;
-
-                        wheelRewardButtonFade.Show();
-                        wheelRewardButton.interactable = true;
-
-                        homeButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
-                        nextLevelButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
-
-                        homeButton.interactable = true;
-                        nextLevelButton.interactable = true;
-                    });
-                });
-            });
         }
 
         public override void PlayHideAnimation()
@@ -239,11 +247,6 @@ namespace Watermelon
         {
             AudioController.PlaySound(AudioController.Sounds.buttonSound);
 
-            if (noThanksAppearTween != null && noThanksAppearTween.IsActive)
-            {
-                noThanksAppearTween.Kill();
-            }
-
             if (!isClicked)
             {
                 UIController.HidePage<UIComplete>(() =>
@@ -252,13 +255,7 @@ namespace Watermelon
                 });
 
                 isClicked = true;
-            }
-            else
-            {
-                wheelRewardButtonFade.Hide(immediately: true);
-                wheelRewardButton.interactable = false;
-            }
-            
+            }            
         }
 
         #endregion

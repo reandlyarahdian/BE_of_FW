@@ -33,13 +33,11 @@ namespace Watermelon
         private int coinsHash = FloatingCloud.StringToHash("Coins");
         private int currentReward;
 
+        private bool isClicked = false;
+
         private void Update()
         {
             extraButton.interactable = isActiveated;
-            if (isActiveated)
-            {
-                spinButton.onClick.AddListener(WheelButton);
-            }
         }
 
         public override void Initialise()
@@ -88,6 +86,7 @@ namespace Watermelon
 
             extraButtonAnimation.Show(fadeDuration);
             spinButton.interactable = true;
+
             UIController.OnPageOpened(this);
         }
 
@@ -122,10 +121,6 @@ namespace Watermelon
         {
             AudioController.PlaySound(AudioController.Sounds.buttonSound);
 
-            CurrenciesController.Add(wheelManager.CollectableTypeEx(), wheelManager.CollectableRewordEx());
-
-            ClientManager.Instance.WheelsPoints(wheelManager.CollectableRewordEx());
-
             UIController.HidePage<UIWheel>(() =>
             {
                 UIController.ShowPage<UIComplete>();
@@ -137,37 +132,46 @@ namespace Watermelon
         {
             AudioController.PlaySound(AudioController.Sounds.buttonSound);
 
-            AdsManager.ShowRewardBasedVideo((bool success) =>
+            if (!isClicked)
             {
-                if (success)
-                {
-                    int rewrdMulti = 3;
 
-                    ShowRewardLabel(wheelManager.CollectableRewordEx() * rewrdMulti, false, 0.3f, delegate
+                AdsManager.ShowRewardBasedVideo((bool success) =>
+                {
+                    if (success)
                     {
-                        FloatingCloud.SpawnCurrency(coinsHash, rewardLabel.RectTransform, coinsPanelScalable.RectTransform, 10, "", () =>
+                        int rewrdMulti = 3;
+
+                        ShowRewardLabel(wheelManager.CollectableRewordEx() * rewrdMulti, false, 0.3f, delegate
                         {
-                            CurrenciesController.Add(CurrencyType.Coins, wheelManager.CollectableRewordEx() * rewrdMulti);
+                            FloatingCloud.SpawnCurrency(coinsHash, rewardLabel.RectTransform, coinsPanelScalable.RectTransform, 10, "", () =>
+                            {
+                                CurrenciesController.Add(CurrencyType.Coins, wheelManager.CollectableRewordEx() * rewrdMulti);
 
-                            ClientManager.Instance.WheelsPoints(wheelManager.CollectableRewordEx() * rewrdMulti);
+                                ClientManager.Instance.WheelsPoints(wheelManager.CollectableRewordEx() * rewrdMulti);
+                            });
                         });
-                    });
 
-                    float fadeDuration = 0.3f;
-                    spinFade.Show(fadeDuration);
-                    extraButtonAnimation.Show(fadeDuration);
+                        float fadeDuration = 0.3f;
+                        spinFade.Show(fadeDuration);
+                        extraButtonAnimation.Show(fadeDuration);
 
-                    extraButton.interactable = false;
-                }
-                else
-                {
-                    UIController.HidePage<UIWheel>(() =>
+                        extraButton.interactable = false;
+                    }
+                    else
                     {
-                        UIController.ShowPage<UIComplete>();
-                        UIController.OnPageClosed(this);
-                    });
-                }
-            });
+                        UIController.HidePage<UIWheel>(() =>
+                        {
+                            UIController.ShowPage<UIComplete>();
+                            UIController.OnPageClosed(this);
+                        });
+                    }
+                });
+
+                isClicked = true;
+                isActiveated = false;
+            }
+
+            extraButton.interactable = false;
         }
     }
 }

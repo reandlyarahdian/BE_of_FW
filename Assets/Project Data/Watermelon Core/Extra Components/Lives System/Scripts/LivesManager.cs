@@ -36,8 +36,6 @@ namespace Watermelon
             save = SaveController.GetSaveObject<LivesSave>("Lives");
             save.Init(data);
 
-            ClientManager.Instance.GetCurrentEnergy();
-
             // For init purposses
             SetLifes(Lives);
 
@@ -54,7 +52,11 @@ namespace Watermelon
 
         public void InitLivesServer(int value)
         {
+            save.Init(data);
             save.livesCount = value;
+            RemoveLife();
+            save.livesCount = Lives;
+            ClientManager.Instance.GetCurrentEnergy();
         }
 
         public static void AddPanel(AddLivesPanel panel)
@@ -125,6 +127,7 @@ namespace Watermelon
             if (save.infiniteLives || !DoNotSpendLivesMenu.CanLivesBeSpent()) return;
 
             Lives-=8;
+            ClientManager.Instance.DecreeseEnergy();
 
             if (Lives < 0)
                 Lives = 0;
@@ -139,7 +142,10 @@ namespace Watermelon
         public static void AddLife()
         {
             if (Lives < instance.data.maxLivesCount)
-                Lives++;
+            {
+                Lives += 8;
+                ClientManager.Instance.EnergyWatchAdsFinished();
+            }                
         }
 
         private IEnumerator InfiniteLivesCoroutine()
@@ -266,7 +272,7 @@ namespace Watermelon
                         if (DateTime.Now >= date) infiniteLives = false;
                     }
 
-                    if (livesCount < Mathf.CeilToInt(ClientManager.Instance.roomState.energy))
+                    if (livesCount <= Mathf.CeilToInt(ClientManager.Instance.roomState.energy))
                     {
                         livesCount = Mathf.CeilToInt(ClientManager.Instance.roomState.energy);
 

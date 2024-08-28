@@ -57,6 +57,7 @@ public class WheelButtonPresenter : MonoBehaviour
     {
         button.interactable = false;
 
+        wheel.WheelButton();
         wheelManager.NextStart();
     }
 

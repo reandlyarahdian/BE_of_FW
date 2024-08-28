@@ -109,10 +109,10 @@ namespace Watermelon
                 UIController.HidePage<UIGameOver>();
                 GameController.ReplayLevel();
             }
-            //else
-            //{
-            //    addLivesPanel.Show();
-            //}
+            else
+            {
+                addLivesPanel.Show();
+            }
         }
 
         private void MenuButton()

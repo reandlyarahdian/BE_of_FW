@@ -64,7 +64,7 @@ export class MatchTile extends Room<MatchTileState> {
     this.state.playSession = new PlaySession();
     this.state.energy = 16;
     this.maxClients = 1;
-    this.state.currentLevel = 3;
+    this.state.currentLevel = 1;
     this.state.score = 30;
 
     this.onMessage("request_initial_data", (client) => {
@@ -88,9 +88,15 @@ export class MatchTile extends Room<MatchTileState> {
         this.state.playSession.playSessionActionCount = 0; //
         this.sessionLog.showLog(this.state.playSession.playSessionActionCount.toString());
         // store to db
-        this.energy.set(this.energy_required);        
-      }
+        this.energy.set(this.state.energy);
+        }
     });
+
+    this.onMessage("decreese_energy", (client, message) =>{
+      this.state.energy -= this.energy_required;
+      this.energy.decrement(this.energy_required);     
+      this.sessionLog.addHistory(`energy: ${this.state.energy}`);  
+    })
 
     this.onMessage("set_score", (client, message : number) => {
       this.sessionLog.showLog("score!");
