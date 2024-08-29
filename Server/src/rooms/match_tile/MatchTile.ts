@@ -62,7 +62,7 @@ export class MatchTile extends Room<MatchTileState> {
   onCreate(options: any) {
     this.setState(new MatchTileState());
     this.state.playSession = new PlaySession();
-    this.state.energy = 16;
+    this.state.energy = 8;
     this.maxClients = 1;
     this.state.currentLevel = 1;
     this.state.score = 30;

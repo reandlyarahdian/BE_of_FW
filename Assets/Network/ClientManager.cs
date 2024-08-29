@@ -175,8 +175,8 @@ public class ClientManager : MonoBehaviour
         roomState.currentLevel = initial.currentLevel;
         roomState.energy = initial.energy;
 
-        CurrenciesController.Set(CurrencyType.Coins, (int)roomState.score);
         LivesManager.instance.InitLivesServer((int)roomState.energy);
+        CurrenciesController.Set(CurrencyType.Coins, (int)roomState.score);
         LevelController.instance.InitLevelServer((int)roomState.currentLevel);
 
         Debug.Log($"Level: {initial.currentLevel}, Score: {initial.score}, Energy: {initial.energy}");
