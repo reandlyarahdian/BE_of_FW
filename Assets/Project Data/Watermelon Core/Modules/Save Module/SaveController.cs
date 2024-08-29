@@ -36,11 +36,11 @@ namespace Watermelon
                 Load(overrideTime != -1f ? overrideTime : Time.time);
             }
 
-            if (useAutoSave)
-            {
-                // Enable auto-save coroutine
-                Tween.InvokeCoroutine(AutoSaveCoroutine());
-            }
+            //if (useAutoSave)
+            //{
+            //    // Enable auto-save coroutine
+            //    Tween.InvokeCoroutine(AutoSaveCoroutine());
+            //}
         }
 
         public static void UpdateTime(float time)
@@ -129,17 +129,17 @@ namespace Watermelon
             isSaveRequired = true;
         }
 
-        private static IEnumerator AutoSaveCoroutine()
-        {
-            WaitForSeconds waitForSeconds = new WaitForSeconds(SAVE_DELAY);
+        //private static IEnumerator AutoSaveCoroutine()
+        //{
+        //    WaitForSeconds waitForSeconds = new WaitForSeconds(SAVE_DELAY);
 
-            while (true)
-            {
-                yield return waitForSeconds;
+        //    while (true)
+        //    {
+        //        yield return waitForSeconds;
 
-                Save();
-            }
-        }
+        //        Save();
+        //    }
+        //}
 
         public static void PresetsSave(string fullFileName)
         {

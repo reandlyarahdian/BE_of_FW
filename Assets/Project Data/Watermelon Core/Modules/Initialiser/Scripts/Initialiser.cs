@@ -116,7 +116,7 @@ namespace Watermelon
             IsInititalized = false;
 
 #if UNITY_EDITOR
-            SaveController.Save(true);
+            //SaveController.Save(true);
 #endif
         }
 

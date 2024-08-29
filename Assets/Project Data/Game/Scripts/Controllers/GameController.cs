@@ -35,7 +35,7 @@ namespace Watermelon
         {
             gameController = this;
 
-            SaveController.Initialise(useAutoSave: false);
+            //SaveController.Initialise(useAutoSave: false);
 
             // Cache components
             CacheComponent(out particlesController);
