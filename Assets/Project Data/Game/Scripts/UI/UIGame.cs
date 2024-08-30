@@ -95,7 +95,7 @@ namespace Watermelon
         public void ExitPopUpConfirmExitButton()
         {
             //if (LivesManager.IsMaxLives)
-            //    LivesManager.RemoveLife();
+               LivesManager.RemoveLife();
 
             UIController.HidePage<UIGame>();
 

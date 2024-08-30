@@ -62,9 +62,9 @@ export class MatchTile extends Room<MatchTileState> {
   onCreate(options: any) {
     this.setState(new MatchTileState());
     this.state.playSession = new PlaySession();
-    this.state.energy = 8;
+    this.state.energy = 16;
     this.maxClients = 1;
-    this.state.currentLevel = 1;
+    this.state.currentLevel = 0;
     this.state.score = 30;
 
     this.onMessage("request_initial_data", (client) => {
@@ -159,7 +159,13 @@ export class MatchTile extends Room<MatchTileState> {
     });
 
     this.onMessage("get_current_energy", (client, message) => {
+      this.sessionLog.addHistory(`energy: ${this.state.energy}`);  
       client.send("energy", this.state.energy);
+    });
+
+    this.onMessage("add_energy", (client, message) => {
+      this.state.energy += 1;
+      this.sessionLog.addHistory(`energy: ${this.state.energy}`);
     });
 
     this.onMessage("multiplier_watch_ads_finished", (client, message) => {
@@ -174,7 +180,9 @@ export class MatchTile extends Room<MatchTileState> {
       // check callback
       this.state.energy += this.energy_required;
       // store to db
-      this.energy.increment(this.energy_required)
+      this.energy.increment(this.energy_required);
+
+      this.sessionLog.addHistory(`energy: ${this.state.energy}`);  
     })
 
     this.onMessage("wheels_points", (client, message : number) => {

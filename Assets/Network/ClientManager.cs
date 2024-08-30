@@ -209,6 +209,10 @@ public class ClientManager : MonoBehaviour
         Debug.Log("State Updated: Level: " + state.currentLevel + ", Score: " + state.score + ", Energy: " + state.energy);
     }
 
+    public async Task AddEnergyAsync() 
+    {
+        await _room.Send("add_energy", null);
+    }
     public async Task DecreeseEnergyAsync()
     {
         await _room.Send("decreese_energy", null);
@@ -267,6 +271,11 @@ public class ClientManager : MonoBehaviour
     private void OnLeaveRoom(int code)
     {
         Debug.Log("Left the room");
+    }
+
+    public void AddEnergy()
+    {
+        _ = AddEnergyAsync();
     }
 
     public void DecreeseEnergy()

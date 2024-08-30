@@ -53,10 +53,12 @@ namespace Watermelon
         public void InitLivesServer(int value)
         {
             save.Init(data);
-            save.livesCount = value;
-            RemoveLife();
-            save.livesCount = Lives;
-            ClientManager.Instance.GetCurrentEnergy();
+            SetLifes(value);
+            if (save.livesCount > 0 && Lives < data.maxLivesCount)
+            {
+                livesCoroutine = Tween.InvokeCoroutine(instance.LivesCoroutine());
+            }
+
         }
 
         public static void AddPanel(AddLivesPanel panel)
@@ -192,6 +194,8 @@ namespace Watermelon
                 if (timespan >= oneLifeSpan)
                 {
                     Lives++;
+
+                    ClientManager.Instance.AddEnergy();
 
                     LivesDate = DateTime.Now;
                 }
