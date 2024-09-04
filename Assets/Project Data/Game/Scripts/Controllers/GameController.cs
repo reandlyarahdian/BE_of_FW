@@ -8,6 +8,7 @@ using UnityEditor;
 
 namespace Watermelon
 {
+    [DefaultExecutionOrder(-995)]
     public class GameController : MonoBehaviour
     {
         private static GameController gameController;
@@ -74,10 +75,10 @@ namespace Watermelon
             }
             else
             {
-                mapBehavior.Show();
+                //mapBehavior.Show();
 
                 // Display default page
-                UIController.ShowPage<UIMainMenu>();
+                //UIController.ShowPage<UIMainMenu>();
 
                 //AdsManager.EnableBanner();
 
@@ -86,7 +87,7 @@ namespace Watermelon
 #endif
             }
 
-            GameLoading.MarkAsReadyToHide();
+            //GameLoading.MarkAsReadyToHide();
         }
 
         public static void LoadLevel(int index, SimpleCallback onLevelLoaded = null)

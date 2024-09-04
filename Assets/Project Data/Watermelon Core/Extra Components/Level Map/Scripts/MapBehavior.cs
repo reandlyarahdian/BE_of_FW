@@ -35,8 +35,6 @@ namespace Watermelon.Map
         private void Awake()
         {
             instance = this;
-            loadedChunks = new List<MapChunkBehavior>();
-
             // The height of the orthographic camera in default units
             MapVisibleRectHeight = Camera.main.orthographicSize * 2;
 
@@ -51,6 +49,11 @@ namespace Watermelon.Map
             }
 
             enabled = false;
+        }
+
+        public void Init()
+        {
+            loadedChunks = new List<MapChunkBehavior>();
         }
 
         public void Show()

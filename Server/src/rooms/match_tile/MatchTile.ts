@@ -64,10 +64,10 @@ export class MatchTile extends Room<MatchTileState> {
     this.state.playSession = new PlaySession();
     this.state.energy = 16;
     this.maxClients = 1;
-    this.state.currentLevel = 0;
+    this.state.currentLevel = 2;
     this.state.score = 30;
 
-    this.onMessage("request_initial_data", (client) => {
+    this.onMessage("request_initial_data", (client, message) => {
       client.send("initial_data", {
         currentLevel: this.state.currentLevel,
         score: this.state.score,

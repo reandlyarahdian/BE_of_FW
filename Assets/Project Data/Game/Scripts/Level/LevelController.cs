@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Watermelon.Map;
 
 namespace Watermelon
 {
@@ -17,6 +18,8 @@ namespace Watermelon
         [SerializeField] GameObject levelObject;
         [SerializeField] GameObject layersParentObject;
         [SerializeField] DockBehavior dock;
+        [SerializeField] MapBehavior mapBehavior;
+        [SerializeField] UIController uiController;
 
         private static bool isLevelLoaded;
         public static bool IsLevelLoaded => isLevelLoaded;
@@ -94,14 +97,23 @@ namespace Watermelon
             LoadBackground();
         }
 
-        public void InitLevelServer(int value)
+        public void Initialise(int value)
         {
+            
             dock.DisposeQuickly();
             dock.Initialise(this);
 
             levelSave.Init(value);
 
-            Debug.Log("A " + levelSave.RealLevelIndex + " B " + levelSave.DisplayLevelIndex + " C " + levelSave.LastPlayerLevelIndex);
+            mapBehavior.Init();
+
+            uiController.InitialisePages();
+
+            mapBehavior.Show();
+
+            UIController.ShowPage<UIMainMenu>();
+
+            GameLoading.MarkAsReadyToHide();
         }
 
         public void LoadCustomLevel(LevelData levelData, PreloadedLevelData preloadedLevelData, BackgroundData backgroundData, bool animateDock, SimpleCallback onLevelLoaded = null)

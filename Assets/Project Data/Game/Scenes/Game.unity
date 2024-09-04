@@ -832,6 +832,8 @@ MonoBehaviour:
   levelObject: {fileID: 774289891}
   layersParentObject: {fileID: 1006114699}
   dock: {fileID: 529591111}
+  mapBehavior: {fileID: 1060784211}
+  uiController: {fileID: 8095943557840496073}
 --- !u!114 &1060784205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1445,7 +1447,7 @@ PrefabInstance:
     - target: {fileID: 7069787924616044244, guid: a6a57bc430670554483b9c3ee65a7f34,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -299.12012
+      value: -299.1201
       objectReference: {fileID: 0}
     - target: {fileID: 7434222944510334150, guid: a6a57bc430670554483b9c3ee65a7f34,
         type: 3}
