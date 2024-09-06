@@ -12,7 +12,7 @@ public class WheelButtonPresenter : MonoBehaviour
     [SerializeField] private Button button;
     [SerializeField] private UIWheel wheel;
 
-    private void OnEnable()
+    private void Start()
     {
         button.onClick.AddListener(SpinEventListener);
 
@@ -55,10 +55,15 @@ public class WheelButtonPresenter : MonoBehaviour
 
     private void NextLvl()
     {
-        button.interactable = false;
+        button.interactable = true;
 
-        wheel.WheelButton();
-        wheelManager.NextStart();
+        if (!wheel.isActiveated)
+            wheel.WheelButton();
+        else if (wheel.isActiveated)
+        {
+            wheelButton.SpinAvailable();
+            button.onClick.AddListener(SpinEventListener);
+        }
     }
 
     private void UpdateButton()

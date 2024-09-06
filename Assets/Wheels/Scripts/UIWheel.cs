@@ -33,7 +33,7 @@ namespace Watermelon
         private int coinsHash = FloatingCloud.StringToHash("Coins");
         private int currentReward;
 
-        private bool isClicked = false;
+        public bool isClicked = false;
 
         private void Update()
         {
@@ -87,6 +87,8 @@ namespace Watermelon
             extraButtonAnimation.Show(fadeDuration);
             spinButton.interactable = true;
 
+            isClicked = false;
+
             UIController.OnPageOpened(this);
         }
 
@@ -124,7 +126,6 @@ namespace Watermelon
             UIController.HidePage<UIWheel>(() =>
             {
                 UIController.ShowPage<UIComplete>();
-                UIController.OnPageClosed(this);
             });
         }
 
@@ -139,7 +140,7 @@ namespace Watermelon
                 {
                     if (success)
                     {
-                        int rewrdMulti = 3;
+                        int rewrdMulti = 2;
 
                         ShowRewardLabel(wheelManager.CollectableRewordEx() * rewrdMulti, false, 0.3f, delegate
                         {
@@ -159,11 +160,7 @@ namespace Watermelon
                     }
                     else
                     {
-                        UIController.HidePage<UIWheel>(() =>
-                        {
-                            UIController.ShowPage<UIComplete>();
-                            UIController.OnPageClosed(this);
-                        });
+                        WheelButton();
                     }
                 });
 

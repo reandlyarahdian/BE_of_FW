@@ -80,6 +80,8 @@ namespace Watermelon
 
             currency.Amount = amount;
 
+            ClientManager.Instance.SetScore(currency.Amount);
+
             // Change save state to required
             SaveController.MarkAsSaveIsRequired();
 
@@ -93,6 +95,8 @@ namespace Watermelon
 
             currency.Amount += amount;
 
+            ClientManager.Instance.SetScore(currency.Amount);
+
             // Change save state to required
             SaveController.MarkAsSaveIsRequired();
 
@@ -105,6 +109,8 @@ namespace Watermelon
             Currency currency = currencies[currenciesLink[currencyType]];
 
             currency.Amount -= amount;
+
+            ClientManager.Instance.SetScore(currency.Amount);
 
             // Change save state to required
             SaveController.MarkAsSaveIsRequired();

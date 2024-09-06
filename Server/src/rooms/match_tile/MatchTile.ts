@@ -64,7 +64,7 @@ export class MatchTile extends Room<MatchTileState> {
     this.state.playSession = new PlaySession();
     this.state.energy = 16;
     this.maxClients = 1;
-    this.state.currentLevel = 2;
+    this.state.currentLevel = 0;
     this.state.score = 30;
 
     this.onMessage("request_initial_data", (client, message) => {
@@ -194,8 +194,6 @@ export class MatchTile extends Room<MatchTileState> {
 
         this.sessionLog.addHistory(`${wheels}`);
 
-        this.state.score += wheels;
-
         this.sessionLog.addHistory(`score: ${this.state.score}`);
     });
 
@@ -209,8 +207,6 @@ export class MatchTile extends Room<MatchTileState> {
         client.send("multiplier", multiplier);
 
         this.sessionLog.addHistory(`${multiplier}x`);
-
-        this.state.score *= multiplier;
 
         this.sessionLog.addHistory(`score: ${this.state.score}`);
       }

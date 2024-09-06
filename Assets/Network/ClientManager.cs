@@ -323,13 +323,11 @@ public class ClientManager : MonoBehaviour
     public void WheelsPoints(float point)
     {
         _ = WheelsPointsAsync(point);
-        roomState.score += point;
     }
 
     public void MultiplyPoints(float point)
     {
         _ = MultiplyPointsAsync(point);
-        roomState.score *= point;
     }
 
     public void EndPlaySession()

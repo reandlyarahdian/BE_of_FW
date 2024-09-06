@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Reward 8
   m_EditorClassIdentifier: 
   id: 7
-  rewardName: 10x
+  rewardName: 5x
   currencyType: 0
   icon: {fileID: 21300000, guid: 8453a3416047bb447add08ac5ce7be02, type: 3}
-  value: 10
+  value: 5

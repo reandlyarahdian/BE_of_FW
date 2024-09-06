@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Reward 2
   m_EditorClassIdentifier: 
   id: 1
-  rewardName: 4x
+  rewardName: 3x
   currencyType: 0
   icon: {fileID: 21300000, guid: 4face3fb1471f5d42b2e17d82af3b774, type: 3}
-  value: 4
+  value: 3

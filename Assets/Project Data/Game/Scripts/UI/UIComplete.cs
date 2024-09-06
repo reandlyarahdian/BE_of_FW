@@ -39,6 +39,7 @@ namespace Watermelon
         private int currentReward;
 
         private bool isClicked = false;
+        private bool isMulti = false;
 
         public override void Initialise()
         {
@@ -49,8 +50,6 @@ namespace Watermelon
 
             coinsPanelUI.Initialise();
             
-            isClicked = false;
-
             NotchSaveArea.RegisterRectTransform(safeAreaTransform);
         }
 
@@ -91,7 +90,6 @@ namespace Watermelon
                         {
 
                             CurrenciesController.Add(CurrencyType.Coins, currentReward);
-                            ClientManager.Instance.SetScore(ClientManager.Instance.roomState.score + currentReward);
 
                             multiplyRewardButtonFade.Show();
                             multiplyRewardButton.interactable = true;
@@ -113,11 +111,40 @@ namespace Watermelon
                 currentReward = (int)ClientManager.Instance.roomState.score;
                 ClientManager.Instance.SetScore(currentReward);
 
-                multiplyRewardButtonFade.Hide(immediately: true);
-                multiplyRewardButton.interactable = false;
+                if (!isMulti)
+                {
+                    ShowRewardLabel(currentReward, false, 0.3f, delegate
+                    {
+                        FloatingCloud.SpawnCurrency(coinsHash, rewardLabel.RectTransform, coinsPanelScalable.RectTransform, 10, "", () =>
+                        {
+                            isClicked = false;
+                            isMulti = false;
 
-                wheelRewardButtonFade.Hide(immediately: true);
-                wheelRewardButton.interactable = false;
+                            multiplyRewardButtonFade.Show();
+                            multiplyRewardButton.interactable = true;
+
+                            wheelRewardButtonFade.Hide(immediately: true);
+                            wheelRewardButton.interactable = false;
+                        });
+                    });
+                }
+                else
+                {
+                    ShowRewardLabel(currentReward, false, 0.3f, delegate
+                    {
+                        FloatingCloud.SpawnCurrency(coinsHash, rewardLabel.RectTransform, coinsPanelScalable.RectTransform, 10, "", () =>
+                        {
+                            isClicked = false;
+                            isMulti = false;
+
+                            wheelRewardButtonFade.Hide(immediately: true);
+                            wheelRewardButton.interactable = false;
+
+                            multiplyRewardButtonFade.Hide(immediately: true);
+                            multiplyRewardButton.interactable = false;
+                        });
+                    });
+                }
 
                 homeButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
                 nextLevelButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
@@ -213,6 +240,8 @@ namespace Watermelon
                             nextLevelButton.interactable = true;
                         });
                     });
+
+                    isMulti = true;
                 }
                 else
                 {
