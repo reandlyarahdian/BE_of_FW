@@ -194,7 +194,6 @@ namespace Watermelon
             }
 
             levelSave.DisplayLevelIndex = levelIndex;
-            ClientManager.Instance.roomState.currentLevel = realLevelIndex;
 
             loadedLevelIndex = levelIndex;
             firstTimeCompletedLevel = false;

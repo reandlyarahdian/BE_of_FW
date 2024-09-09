@@ -125,6 +125,8 @@ namespace Watermelon
             UIController.HidePage<UIGame>(() =>
             {
                 UIController.ShowPage<UIComplete>();
+
+                ClientManager.Instance.SetLevel(LevelController.DisplayedLevelIndex);
             });
 
             isGameActive = false;
@@ -146,6 +148,8 @@ namespace Watermelon
         public static void LoadNextLevel(SimpleCallback onLevelLoaded = null)
         {
             LoadLevel(LevelController.DisplayedLevelIndex, onLevelLoaded);
+
+            ClientManager.Instance.SetLevel(LevelController.DisplayedLevelIndex + 1);
         }
 
         public static void ReplayLevel()
